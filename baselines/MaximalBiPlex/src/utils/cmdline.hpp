@@ -139,9 +139,9 @@ inline std::string readable_typename<std::string>()
   return "string";
 }
 
-} // detail
+}
 
-//-----
+
 
 class cmdline_error : public std::exception {
 public:
@@ -201,7 +201,7 @@ oneof_reader<T> oneof(std::initializer_list<T> list) {
   return oneof_reader<T>(list);
 }
 
-//-----
+
 
 class parser{
 public:
@@ -709,4 +709,4 @@ private:
   std::vector<std::string> errors;
 };
 
-} // cmdline
+}

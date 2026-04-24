@@ -28,11 +28,11 @@ public:
 		delete[] buf;
 	}
 	bool empty() {
-		// while (true) {
-			// if (sp == tp && nextPage() == 0) return true;
-			// for (; sp != tp && isspace(*sp); sp++);
-			// if (!isspace(*sp)) break;
-		// }
+
+
+
+
+
 
 		if (sp == tp && nextPage() == 0) return true;
 		return false;

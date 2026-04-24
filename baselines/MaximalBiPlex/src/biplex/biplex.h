@@ -31,7 +31,7 @@ namespace biplex {
 		bool outputResults=false,
 		SearchLogger* searchLogger=nullptr);
 
-	//uint32_t biplexLowerBound(const BiGraph& G);
+
 
 	uint32_t biplexUpperBound(uint32_t u, uint32_t uSide);
 

@@ -5,10 +5,10 @@
 #include<string>
 #include<list>
 #include <filesystem>
-#include <sys/mman.h>  // For mmap
-#include <fcntl.h>     // For open
-#include <unistd.h>    // For close
-#include <sys/stat.h>  // For file size
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <sys/stat.h>
 #include <set>
 #include <vector>
 #include <algorithm>
@@ -207,7 +207,7 @@ tuple<bool, uint, uint> ReadBinGraph(
     std::memcpy(&V, fileData + index, 4); index += 4;
     std::memcpy(&firstRight, fileData + index, 4); index += 4;
 
-    rightFirstNode = static_cast<int>(firstRight); // 不要减 1
+    rightFirstNode = static_cast<int>(firstRight);
 
     uint64_t expectedSize = 12ull + 8ull * V + 4ull * E;
     if (expectedSize != (uint64_t)sb.st_size) {
@@ -262,32 +262,32 @@ tuple<bool, uint, uint> ReadBinGraph(
 }
 
 std::tuple<bool, uint, uint> ReadTextGraph(const std::filesystem::path dataset_path, std::vector<std::vector<int>>& Graph, std::vector<int>& degrees, int &rightFirstNode) {
-	// 打开文本文件
+
 	std::ifstream in(dataset_path);
 	if (!in.is_open()) {
-		// 假设 ERROR_CALL 是你定义好的宏或函数
+
 		std::cerr << "[ERROR] path: " << dataset_path.string() << " - File couldn't open" << std::endl;
 		return {false, 0, 0};
 	}
 
 	uint V, bipartite_idx, core_num;
-	// 读取头部信息：V bipartite_idx core_num
+
 	if (!(in >> V >> bipartite_idx >> core_num)) {
 		std::cerr << "[ERROR] Failed to read graph header for: " << dataset_path.string() << std::endl;
 		return {false, 0, 0};
 	}
 
-	// 写入代码中 bipartite_idx 就是右侧顶点的起始索引，无需像原代码那样 -1
+
 	rightFirstNode = bipartite_idx;
 
-	// 初始化数据结构
-	degrees.assign(V, 0);       // 原代码是 V+1，这里改为 V 更符合 0-indexed 标准
+
+	degrees.assign(V, 0);
 	Graph.assign(V, std::vector<int>());
 
 	uint total_degrees = 0;
 
-	// 逐行读取每个顶点的度数和邻居
-	// 注意：由于写入文件没有保存节点原始 ID，这里只能按顺序 0 到 V-1 分配 ID
+
+
 	for (uint i = 0; i < V; ++i) {
 		uint degree;
 		if (!(in >> degree)) break;
@@ -296,7 +296,7 @@ std::tuple<bool, uint, uint> ReadTextGraph(const std::filesystem::path dataset_p
 		Graph[i].reserve(degree);
 		total_degrees += degree;
 
-		// 读取邻接节点列表
+
 		for (uint j = 0; j < degree; ++j) {
 			uint neighbor;
 			in >> neighbor;
@@ -306,7 +306,7 @@ std::tuple<bool, uint, uint> ReadTextGraph(const std::filesystem::path dataset_p
 
 	in.close();
 
-	// 对于无向二分图，总度数是边数 (E) 的两倍
+
 	uint E = total_degrees / 2; 
 
 	return {true, V, E};
@@ -360,4 +360,4 @@ int Util::ReadGraph(string dataset_path,int **&Graph, int *&degree){
 using Clock = std::chrono::high_resolution_clock;
 using TimePoint = std::chrono::time_point<Clock>;
 std::set<int> checkpoints;
-#endif //SGMOD22_MBPE_UTILS_H
+#endif

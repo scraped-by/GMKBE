@@ -217,7 +217,7 @@ if [ ! -f "$VCPKG_JSON" ]; then
   if [ -n "$BASELINE" ]; then
     cat > "$VCPKG_JSON" <<EOF
 {
-  "name": "GMkBPE",
+  "name": "gmkbpe",
   "version-string": "0.1.0",
   "builtin-baseline": "$BASELINE",
   "dependencies": [
@@ -230,7 +230,7 @@ EOF
   else
     cat > "$VCPKG_JSON" <<'EOF'
 {
-  "name": "GMkBPE",
+  "name": "gmkbpe",
   "version-string": "0.1.0",
   "dependencies": [
     "fmt",
@@ -305,10 +305,10 @@ OUT_FILE="$(readlink -f -- "$OUT_FILE")"
 GRAPH_CONVERT_BIN="$BUILD_DIR/graph_convert"
 [ -x "$GRAPH_CONVERT_BIN" ] || die "graph_convert executable not found: $GRAPH_CONVERT_BIN"
 
-GRAPH_OUTPUT="${OUT_FILE}.graph"
+GRAPH_OUTPUT="${OUT_FILE}"
 
 log "Found KONECT input:  $OUT_FILE"
-log "Graph output path:   $GRAPH_OUTPUT"
+log "Graph output path:   $GRAPH_OUTPUT.graph.bin"
 log "Running graph_convert..."
 "$GRAPH_CONVERT_BIN" -i "$OUT_FILE" -o "$GRAPH_OUTPUT"
 
@@ -320,10 +320,9 @@ log "Building target: gmkbpe"
 
 GMKBPE_BIN="$BUILD_DIR/gmkbpe"
 [ -x "$GMKBPE_BIN" ] || die "gmkbpe executable not found: $GMKBPE_BIN"
+GRAPH_OUTPUT_BIN="$GRAPH_OUTPUT.graph.bin"
+[ -f "$GRAPH_OUTPUT_BIN" ] || die "Graph input file not found: $GRAPH_OUTPUT_BIN"
 
-[ -f "$GRAPH_OUTPUT" ] || die "Graph input file not found: $GRAPH_OUTPUT"
-GRAPH_OUTPUT_BIN="$GRAPH_OUTPUT.bin"
-[ -f "$GRAPH_OUTPUT" ] || die "Graph input file not found: $GRAPH_OUTPUT"
 
 log "Running gmkbpe..."
 log "Input graph: $GRAPH_OUTPUT_BIN"

@@ -1,16 +1,16 @@
-// Copyright 2013 Google Inc. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #ifndef UTIL_BTREE_BTREE_TEST_H__
 #define UTIL_BTREE_BTREE_TEST_H__
@@ -36,34 +36,34 @@ DECLARE_int32(benchmark_values);
 
 namespace std {
 
-// Provide operator<< support for std::pair<T, U>.
+
 template <typename T, typename U>
 ostream& operator<<(ostream &os, const std::pair<T, U> &p) {
   os << "(" << p.first << "," << p.second << ")";
   return os;
 }
 
-// Provide pair equality testing that works as long as x.first is comparable to
-// y.first and x.second is comparable to y.second. Needed in the test for
-// comparing std::pair<T, U> to std::pair<const T, U>.
+
+
+
 template <typename T, typename U, typename V, typename W>
 bool operator==(const std::pair<T, U> &x, const std::pair<V, W> &y) {
   return x.first == y.first && x.second == y.second;
 }
 
-// Partial specialization of remove_const that propagates the removal through
-// std::pair.
+
+
 template <typename T, typename U>
 struct remove_const<pair<T, U> > {
   typedef pair<typename remove_const<T>::type,
                typename remove_const<U>::type> type;
 };
 
-} // namespace std
+}
 
 namespace btree {
 
-// Select the first member of a pair.
+
 template <class _Pair>
 struct select1st : public std::unary_function<_Pair, typename _Pair::first_type> {
   const typename _Pair::first_type& operator()(const _Pair& __x) const {
@@ -71,8 +71,8 @@ struct select1st : public std::unary_function<_Pair, typename _Pair::first_type>
   }
 };
 
-// Utility class to provide an accessor for a key given a value. The default
-// behavior is to treat the value as a pair and return the first element.
+
+
 template <typename K, typename V>
 struct KeyOfValue {
   typedef select1st<V> type;
@@ -83,14 +83,14 @@ struct identity {
   inline const T& operator()(const T& t) const { return t; }
 };
 
-// Partial specialization of KeyOfValue class for when the key and value are
-// the same type such as in set<> and btree_set<>.
+
+
 template <typename K>
 struct KeyOfValue<K, K> {
   typedef identity<K> type;
 };
 
-// Counts the number of occurances of "c" in a buffer.
+
 inline ptrdiff_t strcount(const char* buf_begin, const char* buf_end, char c) {
   if (buf_begin == NULL)
     return 0;
@@ -104,7 +104,7 @@ inline ptrdiff_t strcount(const char* buf_begin, const char* buf_end, char c) {
   return num;
 }
 
-// for when the string is not null-terminated.
+
 inline ptrdiff_t strcount(const char* buf, size_t len, char c) {
   return strcount(buf, buf + len, c);
 }
@@ -113,10 +113,10 @@ inline ptrdiff_t strcount(const std::string& buf, char c) {
   return strcount(buf.c_str(), buf.size(), c);
 }
 
-// The base class for a sorted associative container checker. TreeType is the
-// container type to check and CheckerType is the container type to check
-// against. TreeType is expected to be btree_{set,map,multiset,multimap} and
-// CheckerType is expected to be {set,map,multiset,multimap}.
+
+
+
+
 template <typename TreeType, typename CheckerType>
 class base_checker {
   typedef base_checker<TreeType, CheckerType> self_type;
@@ -137,17 +137,17 @@ class base_checker {
   typedef typename TreeType::const_reverse_iterator const_reverse_iterator;
 
  public:
-  // Default constructor.
+
   base_checker()
       : const_tree_(tree_) {
   }
-  // Copy constructor.
+
   base_checker(const self_type &x)
       : tree_(x.tree_),
         const_tree_(tree_),
         checker_(x.checker_) {
   }
-  // Range constructor.
+
   template <typename InputIterator>
   base_checker(InputIterator b, InputIterator e)
       : tree_(b, e),
@@ -155,7 +155,7 @@ class base_checker {
         checker_(b, e) {
   }
 
-  // Iterator routines.
+
   iterator begin() { return tree_.begin(); }
   const_iterator begin() const { return tree_.begin(); }
   iterator end() { return tree_.end(); }
@@ -165,7 +165,7 @@ class base_checker {
   reverse_iterator rend() { return tree_.rend(); }
   const_reverse_iterator rend() const { return tree_.rend(); }
 
-  // Helper routines.
+
   template <typename IterType, typename CheckerIterType>
   IterType iter_check(
       IterType tree_iter, CheckerIterType checker_iter) const {
@@ -203,7 +203,7 @@ class base_checker {
                 const_tree_.equal_range(key).second);
   }
 
-  // Lookup routines.
+
   iterator lower_bound(const key_type &key) {
     return iter_check(tree_.lower_bound(key), checker_.lower_bound(key));
   }
@@ -246,14 +246,14 @@ class base_checker {
     return res;
   }
 
-  // Assignment operator.
+
   self_type& operator=(const self_type &x) {
     tree_ = x.tree_;
     checker_ = x.checker_;
     return *this;
   }
 
-  // Deletion routines.
+
   int erase(const key_type &key) {
     int size = tree_.size();
     int res = checker_.erase(key);
@@ -305,7 +305,7 @@ class base_checker {
     EXPECT_EQ(tree_.size(), size - count);
   }
 
-  // Utility routines.
+
   void clear() {
     tree_.clear();
     checker_.clear();
@@ -319,7 +319,7 @@ class base_checker {
     tree_.verify();
     EXPECT_EQ(tree_.size(), checker_.size());
 
-    // Move through the forward iterators using increment.
+
     typename CheckerType::const_iterator
         checker_iter(checker_.begin());
     const_iterator tree_iter(tree_.begin());
@@ -328,7 +328,7 @@ class base_checker {
       EXPECT_EQ(*tree_iter, *checker_iter);
     }
 
-    // Move through the forward iterators using decrement.
+
     for (int n = tree_.size() - 1; n >= 0; --n) {
       iter_check(tree_iter, checker_iter);
       --tree_iter;
@@ -337,7 +337,7 @@ class base_checker {
     EXPECT_TRUE(tree_iter == tree_.begin());
     EXPECT_TRUE(checker_iter == checker_.begin());
 
-    // Move through the reverse iterators using increment.
+
     typename CheckerType::const_reverse_iterator
         checker_riter(checker_.rbegin());
     const_reverse_iterator tree_riter(tree_.rbegin());
@@ -346,7 +346,7 @@ class base_checker {
       EXPECT_EQ(*tree_riter, *checker_riter);
     }
 
-    // Move through the reverse iterators using decrement.
+
     for (int n = tree_.size() - 1; n >= 0; --n) {
       riter_check(tree_riter, checker_riter);
       --tree_riter;
@@ -356,10 +356,10 @@ class base_checker {
     EXPECT_EQ(checker_riter, checker_.rbegin());
   }
 
-  // Access to the underlying btree.
+
   const TreeType& tree() const { return tree_; }
 
-  // Size routines.
+
   size_type size() const {
     EXPECT_EQ(tree_.size(), checker_.size());
     return tree_.size();
@@ -383,8 +383,8 @@ class base_checker {
   CheckerType checker_;
 };
 
-// A checker for unique sorted associative containers. TreeType is expected to
-// be btree_{set,map} and CheckerType is expected to be {set,map}.
+
+
 template <typename TreeType, typename CheckerType>
 class unique_checker : public base_checker<TreeType, CheckerType> {
   typedef base_checker<TreeType, CheckerType> super_type;
@@ -395,21 +395,21 @@ class unique_checker : public base_checker<TreeType, CheckerType> {
   typedef typename super_type::value_type value_type;
 
  public:
-  // Default constructor.
+
   unique_checker()
       : super_type() {
   }
-  // Copy constructor.
+
   unique_checker(const self_type &x)
       : super_type(x) {
   }
-  // Range constructor.
+
   template <class InputIterator>
   unique_checker(InputIterator b, InputIterator e)
       : super_type(b, e) {
   }
 
-  // Insertion routines.
+
   std::pair<iterator,bool> insert(const value_type &x) {
     int size = this->tree_.size();
     std::pair<typename CheckerType::iterator,bool> checker_res =
@@ -439,9 +439,9 @@ class unique_checker : public base_checker<TreeType, CheckerType> {
   }
 };
 
-// A checker for multiple sorted associative containers. TreeType is expected
-// to be btree_{multiset,multimap} and CheckerType is expected to be
-// {multiset,multimap}.
+
+
+
 template <typename TreeType, typename CheckerType>
 class multi_checker : public base_checker<TreeType, CheckerType> {
   typedef base_checker<TreeType, CheckerType> super_type;
@@ -452,21 +452,21 @@ class multi_checker : public base_checker<TreeType, CheckerType> {
   typedef typename super_type::value_type value_type;
 
  public:
-  // Default constructor.
+
   multi_checker()
       : super_type() {
   }
-  // Copy constructor.
+
   multi_checker(const self_type &x)
       : super_type(x) {
   }
-  // Range constructor.
+
   template <class InputIterator>
   multi_checker(InputIterator b, InputIterator e)
       : super_type(b, e) {
   }
 
-  // Insertion routines.
+
   iterator insert(const value_type &x) {
     int size = this->tree_.size();
     typename CheckerType::iterator checker_res = this->checker_.insert(x);
@@ -543,7 +543,7 @@ struct Generator<std::pair<T, U> > {
   }
 };
 
-// Generate values for our tests and benchmarks. Value range is [0, maxval].
+
 const std::vector<int>& GenerateNumbers(int n, int maxval) {
   static std::vector<int> values;
   static std::set<int> unique_values;
@@ -564,8 +564,8 @@ const std::vector<int>& GenerateNumbers(int n, int maxval) {
   return values;
 }
 
-// Generates values in the range
-// [0, 4 * min(FLAGS_benchmark_values, FLAGS_test_values)]
+
+
 template <typename V>
 std::vector<V> GenerateValues(int n) {
   int two_times_max = 2 * std::max(FLAGS_benchmark_values, FLAGS_test_values);
@@ -589,7 +589,7 @@ void DoTest(const char *name, T *b, const std::vector<V> &values) {
   T &mutable_b = *b;
   const T &const_b = *b;
 
-  // Test insert.
+
   for (int i = 0; i < values.size(); ++i) {
     mutable_b.insert(values[i]);
     mutable_b.value_check(values[i]);
@@ -601,7 +601,7 @@ void DoTest(const char *name, T *b, const std::vector<V> &values) {
          name, const_b.fullness(), const_b.overhead(),
          double(const_b.bytes_used()) / const_b.size());
 
-  // Test copy constructor.
+
   T b_copy(const_b);
   EXPECT_EQ(b_copy.size(), const_b.size());
   EXPECT_LE(b_copy.height(), const_b.height());
@@ -611,7 +611,7 @@ void DoTest(const char *name, T *b, const std::vector<V> &values) {
     EXPECT_EQ(*b_copy.find(key_of_value(values[i])), values[i]);
   }
 
-  // Test range constructor.
+
   T b_range(const_b.begin(), const_b.end());
   EXPECT_EQ(b_range.size(), const_b.size());
   EXPECT_LE(b_range.height(), const_b.height());
@@ -621,11 +621,11 @@ void DoTest(const char *name, T *b, const std::vector<V> &values) {
     EXPECT_EQ(*b_range.find(key_of_value(values[i])), values[i]);
   }
 
-  // Test range insertion for values that already exist.
+
   b_range.insert(b_copy.begin(), b_copy.end());
   b_range.verify();
 
-  // Test range insertion for new values.
+
   b_range.clear();
   b_range.insert(b_copy.begin(), b_copy.end());
   EXPECT_EQ(b_range.size(), b_copy.size());
@@ -636,14 +636,14 @@ void DoTest(const char *name, T *b, const std::vector<V> &values) {
     EXPECT_EQ(*b_range.find(key_of_value(values[i])), values[i]);
   }
 
-  // Test assignment to self. Nothing should change.
+
   b_range.operator=(b_range);
   EXPECT_EQ(b_range.size(), b_copy.size());
   EXPECT_EQ(b_range.height(), b_copy.height());
   EXPECT_EQ(b_range.internal_nodes(), b_copy.internal_nodes());
   EXPECT_EQ(b_range.leaf_nodes(), b_copy.leaf_nodes());
 
-  // Test assignment of new values.
+
   b_range.clear();
   b_range = b_copy;
   EXPECT_EQ(b_range.size(), b_copy.size());
@@ -651,7 +651,7 @@ void DoTest(const char *name, T *b, const std::vector<V> &values) {
   EXPECT_EQ(b_range.internal_nodes(), b_copy.internal_nodes());
   EXPECT_EQ(b_range.leaf_nodes(), b_copy.leaf_nodes());
 
-  // Test swap.
+
   b_range.clear();
   b_range.swap(b_copy);
   EXPECT_EQ(b_copy.size(), 0);
@@ -661,10 +661,10 @@ void DoTest(const char *name, T *b, const std::vector<V> &values) {
   }
   b_range.swap(b_copy);
 
-  // Test erase via values.
+
   for (int i = 0; i < values.size(); ++i) {
     mutable_b.erase(key_of_value(values[i]));
-    // Erasing a non-existent key should have no effect.
+
     EXPECT_EQ(mutable_b.erase(key_of_value(values[i])), 0);
   }
 
@@ -673,7 +673,7 @@ void DoTest(const char *name, T *b, const std::vector<V> &values) {
   EXPECT_EQ(const_b.leaf_nodes(), 0);
   EXPECT_EQ(const_b.size(), 0);
 
-  // Test erase via iterators.
+
   mutable_b = b_copy;
   for (int i = 0; i < values.size(); ++i) {
     mutable_b.erase(mutable_b.find(key_of_value(values[i])));
@@ -684,25 +684,25 @@ void DoTest(const char *name, T *b, const std::vector<V> &values) {
   EXPECT_EQ(const_b.leaf_nodes(), 0);
   EXPECT_EQ(const_b.size(), 0);
 
-  // Test insert with hint.
+
   for (int i = 0; i < values.size(); i++) {
     mutable_b.insert(mutable_b.upper_bound(key_of_value(values[i])), values[i]);
   }
 
   const_b.verify();
 
-  // Test dumping of the btree to an ostream. There should be 1 line for each
-  // value.
+
+
   std::stringstream strm;
   strm << mutable_b.tree();
   EXPECT_EQ(mutable_b.size(), strcount(strm.str(), '\n'));
 
-  // Test range erase.
+
   mutable_b.erase(mutable_b.begin(), mutable_b.end());
   EXPECT_EQ(mutable_b.size(), 0);
   const_b.verify();
 
-  // First half.
+
   mutable_b = b_copy;
   typename T::iterator mutable_iter_end = mutable_b.begin();
   for (int i = 0; i < values.size() / 2; ++i) ++mutable_iter_end;
@@ -710,7 +710,7 @@ void DoTest(const char *name, T *b, const std::vector<V> &values) {
   EXPECT_EQ(mutable_b.size(), values.size() - values.size() / 2);
   const_b.verify();
 
-  // Second half.
+
   mutable_b = b_copy;
   typename T::iterator mutable_iter_begin = mutable_b.begin();
   for (int i = 0; i < values.size() / 2; ++i) ++mutable_iter_begin;
@@ -718,7 +718,7 @@ void DoTest(const char *name, T *b, const std::vector<V> &values) {
   EXPECT_EQ(mutable_b.size(), values.size() / 2);
   const_b.verify();
 
-  // Second quarter.
+
   mutable_b = b_copy;
   mutable_iter_begin = mutable_b.begin();
   for (int i = 0; i < values.size() / 4; ++i) ++mutable_iter_begin;
@@ -739,7 +739,7 @@ void ConstTest() {
   T mutable_b;
   const T &const_b = mutable_b;
 
-  // Insert a single value into the container and test looking it up.
+
   value_type value = Generator<value_type>(2)(2);
   mutable_b.insert(value);
   EXPECT_TRUE(mutable_b.find(key_of_value(value)) != const_b.end());
@@ -748,7 +748,7 @@ void ConstTest() {
   EXPECT_TRUE(const_b.upper_bound(key_of_value(value)) == const_b.end());
   EXPECT_EQ(*const_b.equal_range(key_of_value(value)).first, value);
 
-  // We can only create a non-const iterator from a non-const container.
+
   typename T::iterator mutable_iter(mutable_b.begin());
   EXPECT_TRUE(mutable_iter == const_b.begin());
   EXPECT_TRUE(mutable_iter != const_b.end());
@@ -760,7 +760,7 @@ void ConstTest() {
   EXPECT_TRUE(const_b.rbegin() == mutable_riter);
   EXPECT_TRUE(const_b.rend() != mutable_riter);
 
-  // We can create a const iterator from a non-const iterator.
+
   typename T::const_iterator const_iter(mutable_iter);
   EXPECT_TRUE(const_iter == mutable_b.begin());
   EXPECT_TRUE(const_iter != mutable_b.end());
@@ -772,7 +772,7 @@ void ConstTest() {
   EXPECT_EQ(mutable_b.rbegin(), const_riter);
   EXPECT_TRUE(mutable_b.rend() != const_riter);
 
-  // Make sure various methods can be invoked on a const container.
+
   const_b.verify();
   EXPECT_FALSE(const_b.empty());
   EXPECT_EQ(const_b.size(), 1);
@@ -796,16 +796,16 @@ void BtreeTest() {
 
   unique_checker<T, C> container;
 
-  // Test key insertion/deletion in sorted order.
+
   std::vector<V> sorted_values(random_values);
   sort(sorted_values.begin(), sorted_values.end());
   DoTest("sorted:    ", &container, sorted_values);
 
-  // Test key insertion/deletion in reverse sorted order.
+
   reverse(sorted_values.begin(), sorted_values.end());
   DoTest("rsorted:   ", &container, sorted_values);
 
-  // Test key insertion/deletion in random order.
+
   DoTest("random:    ", &container, random_values);
 }
 
@@ -818,25 +818,25 @@ void BtreeMultiTest() {
 
   multi_checker<T, C> container;
 
-  // Test keys in sorted order.
+
   std::vector<V> sorted_values(random_values);
   sort(sorted_values.begin(), sorted_values.end());
   DoTest("sorted:    ", &container, sorted_values);
 
-  // Test keys in reverse sorted order.
+
   reverse(sorted_values.begin(), sorted_values.end());
   DoTest("rsorted:   ", &container, sorted_values);
 
-  // Test keys in random order.
+
   DoTest("random:    ", &container, random_values);
 
-  // Test keys in random order w/ duplicates.
+
   std::vector<V> duplicate_values(random_values);
   duplicate_values.insert(
       duplicate_values.end(), random_values.begin(), random_values.end());
   DoTest("duplicates:", &container, duplicate_values);
 
-  // Test all identical keys.
+
   std::vector<V> identical_values(100);
   fill(identical_values.begin(), identical_values.end(), Generator<V>(2)(2));
   DoTest("identical: ", &container, identical_values);
@@ -851,7 +851,7 @@ class TestAllocator : public Alloc {
   TestAllocator() : bytes_used_(NULL) { }
   TestAllocator(int64_t *bytes_used) : bytes_used_(bytes_used) { }
 
-  // Constructor used for rebinding
+
   template <class U>
   TestAllocator(const TestAllocator<U>& x)
       : Alloc(x),
@@ -870,7 +870,7 @@ class TestAllocator : public Alloc {
     *bytes_used_ -= n * sizeof(T);
   }
 
-  // Rebind allows an allocator<T> to be used for a different type
+
   template <class U> struct rebind {
     typedef TestAllocator<U, typename Alloc::template rebind<U>::other> other;
   };
@@ -890,14 +890,14 @@ void BtreeAllocatorTest() {
   T b1(typename T::key_compare(), &alloc1);
   T b2(typename T::key_compare(), &alloc2);
 
-  // This should swap the allocators!
+
   swap(b1, b2);
 
   for (int i = 0; i < 1000; i++) {
     b1.insert(Generator<value_type>(1000)(i));
   }
 
-  // We should have allocated out of alloc2!
+
   EXPECT_LE(b1.bytes_used(), alloc2 + sizeof(b1));
   EXPECT_GT(alloc2, alloc1);
 }
@@ -912,16 +912,16 @@ void BtreeMapTest() {
 
   T b;
 
-  // Verify we can insert using operator[].
+
   for (int i = 0; i < 1000; i++) {
     value_type v = Generator<value_type>(1000)(i);
     b[v.first] = v.second;
   }
   EXPECT_EQ(b.size(), 1000);
 
-  // Test whether we can use the "->" operator on iterators and
-  // reverse_iterators. This stresses the btree_map_params::pair_pointer
-  // mechanism.
+
+
+
   EXPECT_EQ(b.begin()->first, Generator<value_type>(1000)(0).first);
   EXPECT_EQ(b.begin()->second, Generator<value_type>(1000)(0).second);
   EXPECT_EQ(b.rbegin()->first, Generator<value_type>(1000)(999).first);
@@ -935,6 +935,6 @@ void BtreeMultiMapTest() {
   (void) m;
 }
 
-} // namespace btree
+}
 
-#endif  // UTIL_BTREE_BTREE_TEST_H__
+#endif

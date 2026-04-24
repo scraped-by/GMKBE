@@ -197,7 +197,7 @@ namespace args
      */
     inline std::vector<std::string> Wrap(const std::string &in, const std::string::size_type width, std::string::size_type firstlinewidth = 0)
     {
-        // Preserve existing line breaks
+
         const auto newlineloc = in.find('\n');
         if (newlineloc != in.npos)
         {
@@ -227,7 +227,7 @@ namespace args
     }
 
 #ifdef ARGS_NOEXCEPT
-    /// Error class, for when ARGS_NOEXCEPT is defined
+
     enum class Error
     {
         None,
@@ -418,7 +418,7 @@ namespace args
             }
 
 #ifdef ARGS_NOEXCEPT
-            /// Only for ARGS_NOEXCEPT
+
             Error GetError() const noexcept
             {
                 return shortFlags.empty() && longFlags.empty() ? Error::Usage : Error::None;
@@ -506,7 +506,7 @@ namespace args
                     return *shortFlags.begin();
                 }
 
-                // should be unreachable
+
                 return ' ';
             }
 
@@ -524,7 +524,7 @@ namespace args
                     return *longFlags.begin();
                 }
 
-                // should be unreachable
+
                 return ' ';
             }
     };
@@ -785,7 +785,7 @@ namespace args
             bool matched = false;
             const std::string help;
 #ifdef ARGS_NOEXCEPT
-            /// Only for ARGS_NOEXCEPT
+
             mutable Error error = Error::None;
             mutable std::string errorMsg;
 #endif
@@ -871,7 +871,7 @@ namespace args
                 return {};
             }
 
-            /// Sets a kick-out value for building subparsers
+
             void KickOut(bool kickout_) noexcept
             {
                 if (kickout_)
@@ -884,7 +884,7 @@ namespace args
                 }
             }
 
-            /// Gets the kick-out value for building subparsers
+
             bool KickOut() const noexcept
             {
                 return (options & Options::KickOut) != Options::None;
@@ -900,13 +900,13 @@ namespace args
             }
 
 #ifdef ARGS_NOEXCEPT
-            /// Only for ARGS_NOEXCEPT
+
             virtual Error GetError() const
             {
                 return error;
             }
 
-            /// Only for ARGS_NOEXCEPT
+
             std::string GetErrorMsg() const
             {
                 return errorMsg;
@@ -1155,7 +1155,7 @@ namespace args
             }
 
 #ifdef ARGS_NOEXCEPT
-            /// Only for ARGS_NOEXCEPT
+
             virtual Error GetError() const override
             {
                 const auto nargs = NumberOfArguments();
@@ -1365,9 +1365,9 @@ namespace args
                     return group.MatchedChildren() == 0;
                 }
             };
-            /// If help is empty, this group will not be printed in help output
+
             Group(const std::string &help_ = std::string(), const std::function<bool(const Group &)> &validator_ = Validators::DontCare, Options options_ = {}) : Base(help_, options_), validator(validator_) {}
-            /// If help is empty, this group will not be printed in help output
+
             Group(Group &group_, const std::string &help_ = std::string(), const std::function<bool(const Group &)> &validator_ = Validators::DontCare, Options options_ = {}) : Base(help_, options_), validator(validator_)
             {
                 group_.Add(*this);
@@ -1471,7 +1471,7 @@ namespace args
              */
             std::vector<Base *>::size_type MatchedChildren() const
             {
-                // Cast to avoid warnings from -Wsign-conversion
+
                 return static_cast<std::vector<Base *>::size_type>(
                         std::count_if(std::begin(Children()), std::end(Children()), [](const Base *child){return child->Matched();}));
             }
@@ -1496,7 +1496,7 @@ namespace args
             {
                 std::vector<std::tuple<std::string, std::string, unsigned int>> descriptions;
 
-                // Push that group description on the back if not empty
+
                 unsigned addindent = 0;
                 if (!help.empty())
                 {
@@ -1572,7 +1572,7 @@ namespace args
             }
 
 #ifdef ARGS_NOEXCEPT
-            /// Only for ARGS_NOEXCEPT
+
             virtual Error GetError() const override
             {
                 if (error != Error::None)
@@ -1610,9 +1610,9 @@ namespace args
      * \code
      * Command command(argumentParser, "command", "my command", [](args::Subparser &s)
      * {
-     *      // your command flags/positionals
-     *      s.Parse(); //required
-     *      //your command code
+     *
+     *      s.Parse();
+     *
      * });
      * \endcode
      *
@@ -2178,7 +2178,7 @@ namespace args
             }
 
 #ifdef ARGS_NOEXCEPT
-            /// Only for ARGS_NOEXCEPT
+
             virtual Error GetError() const override
             {
                 if (!Matched())
@@ -2355,9 +2355,9 @@ namespace args
             {
                 const auto &chunk = *it;
                 const auto argchunk = chunk.substr(longprefix.size());
-                // Try to separate it, in case of a separator:
+
                 const auto separator = longseparator.empty() ? argchunk.npos : argchunk.find(longseparator);
-                // If the separator is in the argument, separate it.
+
                 const auto arg = (separator != argchunk.npos ?
                     std::string(argchunk, 0, separator)
                     : argchunk);
@@ -2573,7 +2573,7 @@ namespace args
                             if (chunk.size() > shortprefix.size() + 1)
                             {
                                 auto arg = chunk.at(shortprefix.size());
-                                //TODO: support -abcVALUE where a and b take no value
+
                                 if (auto flag = this->Match(arg))
                                 {
                                     for (auto &choice : flag->HelpChoices(helpParams))
@@ -2599,7 +2599,7 @@ namespace args
                 bool terminated = false;
                 std::vector<Command *> commands = GetCommands();
 
-                // Check all arg chunks
+
                 for (auto it = begin; it != end; ++it)
                 {
                     if (Complete(it, end))
@@ -2713,13 +2713,13 @@ namespace args
 
                         if (completion->syntax == "bash")
                         {
-                            // bash tokenizes --flag=value as --flag=value
+
                             for (size_t idx = 0; idx < curArgs.size(); )
                             {
                                 if (idx > 0 && curArgs[idx] == "=")
                                 {
                                     curArgs[idx - 1] += "=";
-                                    // Avoid warnings from -Wsign-conversion
+
                                     const auto signedIdx = static_cast<ptrdiff_t>(idx);
                                     if (idx + 1 < curArgs.size())
                                     {
@@ -2954,13 +2954,13 @@ namespace args
                     }
 
                     auto infoit = std::begin(info);
-                    // groupindent is on both sides of this inequality, and therefore can be removed
+
                     if ((helpParams.flagindent + flagssize + helpParams.gutter) > helpParams.helpindent || infoit == std::end(info) || helpParams.addNewlineBeforeDescription)
                     {
                         help_ << '\n';
                     } else
                     {
-                        // groupindent is on both sides of the minus sign, and therefore doesn't actually need to be in here
+
                         help_ << std::string(helpParams.helpindent - (helpParams.flagindent + flagssize), ' ') << *infoit << '\n';
                         ++infoit;
                     }
@@ -3016,7 +3016,7 @@ namespace args
             template <typename It>
             It ParseArgs(It begin, It end)
             {
-                // Reset all Matched statuses and errors
+
                 Reset();
 #ifdef ARGS_NOEXCEPT
                 error = GetError();

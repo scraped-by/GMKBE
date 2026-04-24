@@ -140,15 +140,15 @@ namespace YES {
                 count_logger.count(res_count);
             if (checkpoints.count(res_count)) {
                 TimePoint current_time = Clock::now();
-                // 计算从开始到现在的耗时 (这里以毫秒为例，也可以用微秒 microseconds)
+
                 std::chrono::duration<double, std::milli> elapsed = current_time - start_time;
                 double ms = elapsed.count();
-                // 记录下来
+
                 time_records.push_back({res_count, ms});
                 cpu::recorder.record(to_string(res_count), ms);
                 fmt::println("Output {}, cost Time: {} ms", res_count, ms);
             }
-            //cout<<"all vertices in R"<<endl;
+
         }
     }
 
@@ -199,15 +199,15 @@ namespace YES {
                 count_logger.count(res_count);
             if (checkpoints.count(res_count)) {
                 TimePoint current_time = Clock::now();
-                // 计算从开始到现在的耗时 (这里以毫秒为例，也可以用微秒 microseconds)
+
                 std::chrono::duration<double, std::milli> elapsed = current_time - start_time;
                 double ms = elapsed.count();
-                // 记录下来
+
                 time_records.push_back({res_count, ms});
                 cpu::recorder.record(to_string(res_count), ms);
                 fmt::println("Output {}, cost Time: {} ms", res_count, ms);
             }
-            //cout<<"all vertices in R"<<endl;
+
         }
     }
 
@@ -297,17 +297,17 @@ namespace YES {
             G_index[pivot] = 1;
 
             for (auto neighbor_node: _Graph[pivot]) {
-                G_index[neighbor_node] = 1; // pivot邻居是1
+                G_index[neighbor_node] = 1;
                 G_degree[neighbor_node] = 1;
-                FIX_Y.push_back(neighbor_node); //FIX_Y是用来存，最开始的MBP——H0的右边顶点
-                Y.push_back(neighbor_node); //Y用来存构建的子图MBP的右边顶点
+                FIX_Y.push_back(neighbor_node);
+                Y.push_back(neighbor_node);
                 G_mark[neighbor_node] = 1;
-                // pivot的二跳邻居中，有多少右边邻居链接一个二跳邻居，即二跳邻居的度
+
                 for (auto twoHopNeighborNode: _Graph[neighbor_node])
                     G_degree[twoHopNeighborNode]++;
             }
 
-            pivotDidnotAccessNodes.clear(); // 在右边，不是pivot的邻居的顶点
+            pivotDidnotAccessNodes.clear();
             for (int rightNodes = Bipartite_index; rightNodes < Graph_size; ++rightNodes)
                 if (G_index[rightNodes] == 0)
                     pivotDidnotAccessNodes.push_back(rightNodes);
@@ -317,15 +317,15 @@ namespace YES {
             for (auto it = pivotDidnotAccessNodes.begin(); temp_i < s; ++it, ++temp_i)
                 pivotDidnotAccessNode_Inc[temp_i] = it;
             _pivotDidnotAccessNode_Inc.assign(pivotDidnotAccessNodes.begin(), pivotDidnotAccessNodes.begin() + s);
-            //其实这里就是，如果右边剩余顶点的数量小于等于k的话，那就建立[L_0, R]MBP, 其中R是所有的右边顶点
-            //_pivotDidnotAccessNode_Inc就是未访问顶点里面，用来建立MBP子图的候选集
+
+
 
             redo = true;
             while (redo) {
                 for (auto node: _pivotDidnotAccessNode_Inc) {
-                    G_index[node] = 1; //在Epsilon长度内的非pivot邻居G_index也是1
+                    G_index[node] = 1;
                     for (auto neighborOfNode: _Graph[node])
-                        G_degree[neighborOfNode]++; // 非pivot邻居的邻居的度
+                        G_degree[neighborOfNode]++;
                 }
                 extension = true;
                 exc_yu = true;
@@ -357,7 +357,7 @@ namespace YES {
                         FIX_Y.emplace_back(node);
                         G_mark[node] = 1;
                     }
-                    // 这个if else部分是用pivot来构造一个初始MBP——H0, 他尽可能的满足右边最大化，即子图右边尽可能是全部的图的右边顶点
+
                     if (Y.size() + s > Epsilon) {
                         for (auto node: _pivotDidnotAccessNode_Inc) {
                             for (auto neighborsOfNode: _Graph[node]) {
@@ -373,7 +373,7 @@ namespace YES {
                                     /*
                                  * neighborsOfNode的邻居都打上标签
                                  * */
-                                    for (auto y: Y) { //遍历现在塑造的子图
+                                    for (auto y: Y) {
                                         if (G_temp4[y] == 0 && (int) (X.size()) + 1 - G_degree[y] > Epsilon) {
                                             /* 这个操作主要避免在左边加入新的顶点时导致右边顶点违背biplex的定义
                                          * 在Y里面, 选那些不是neighborsOfNode(左)邻居(右)的顶点，称其为y，这些顶点情况决定了此时的neighborsOfNode
@@ -471,16 +471,16 @@ namespace YES {
                     if (exc_yu) {
                         string temp_res;
                         TransToString(X, Y, FIX_X, temp_res);
-                        if (Btree.find(temp_res) == Btree.end()) { // 应该是字典来存储是否是重复结果
+                        if (Btree.find(temp_res) == Btree.end()) {
                             if (output % 2 == 0) {
                                 res_count++;
                                 if (res_count % 1000 == 0)
                                     count_logger.count(res_count);
                                 if (checkpoints.count(res_count)) {
                                     TimePoint current_time = Clock::now();
-                                    // 计算从开始到现在的耗时 (这里以毫秒为例，也可以用微秒 microseconds)
+
                                     std::chrono::duration<double, std::milli> elapsed = current_time - start_time;
-                                    // 记录下来
+
                                     double ms = elapsed.count();
                                     time_records.push_back({res_count, ms});
                                     cpu::recorder.record(to_string(res_count), ms);
@@ -508,9 +508,9 @@ namespace YES {
                                     count_logger.count(res_count);
                                 if (checkpoints.count(res_count)) {
                                     TimePoint current_time = Clock::now();
-                                    // 计算从开始到现在的耗时 (这里以毫秒为例，也可以用微秒 microseconds)
+
                                     std::chrono::duration<double, std::milli> elapsed = current_time - start_time;
-                                    // 记录下来
+
                                     double ms = elapsed.count();
                                     time_records.push_back({res_count, ms});
                                     cpu::recorder.record(to_string(res_count), ms);
@@ -914,9 +914,9 @@ namespace YES {
                                     count_logger.count(res_count);
                                 if (checkpoints.count(res_count)) {
                                     TimePoint current_time = Clock::now();
-                                    // 计算从开始到现在的耗时 (这里以毫秒为例，也可以用微秒 microseconds)
+
                                     std::chrono::duration<double, std::milli> elapsed = current_time - start_time;
-                                    // 记录下来
+
                                     double ms = elapsed.count();
                                     time_records.push_back({res_count, ms});
                                     cpu::recorder.record(to_string(res_count), ms);
@@ -944,9 +944,9 @@ namespace YES {
                                     count_logger.count(res_count);
                                 if (checkpoints.count(res_count)) {
                                     TimePoint current_time = Clock::now();
-                                    // 计算从开始到现在的耗时 (这里以毫秒为例，也可以用微秒 microseconds)
+
                                     std::chrono::duration<double, std::milli> elapsed = current_time - start_time;
-                                    // 记录下来
+
                                     double ms = elapsed.count();
                                     time_records.push_back({res_count, ms});
                                     cpu::recorder.record(to_string(res_count), ms);
@@ -1256,10 +1256,10 @@ namespace YES {
                                                 count_logger.count(res_count);
                                             if (checkpoints.count(res_count)) {
                                                 TimePoint current_time = Clock::now();
-                                                // 计算从开始到现在的耗时 (这里以毫秒为例，也可以用微秒 microseconds)
+
                                                 std::chrono::duration<double, std::milli> elapsed =
                                                         current_time - start_time;
-                                                // 记录下来
+
                                                 double ms = elapsed.count();
                                                 time_records.push_back({res_count, ms});
                                                 cpu::recorder.record(to_string(res_count), ms);
@@ -1288,10 +1288,10 @@ namespace YES {
                                                 count_logger.count(res_count);
                                             if (checkpoints.count(res_count)) {
                                                 TimePoint current_time = Clock::now();
-                                                // 计算从开始到现在的耗时 (这里以毫秒为例，也可以用微秒 microseconds)
+
                                                 std::chrono::duration<double, std::milli> elapsed =
                                                         current_time - start_time;
-                                                // 记录下来
+
                                                 double ms = elapsed.count();
                                                 time_records.push_back({res_count, ms});
                                                 cpu::recorder.record(to_string(res_count), ms);
@@ -1648,10 +1648,10 @@ namespace YES {
                                                             count_logger.count(res_count);
                                                         if (checkpoints.count(res_count)) {
                                                             TimePoint current_time = Clock::now();
-                                                            // 计算从开始到现在的耗时 (这里以毫秒为例，也可以用微秒 microseconds)
+
                                                             std::chrono::duration<double, std::milli> elapsed =
                                                                     current_time - start_time;
-                                                            // 记录下来
+
                                                             double ms = elapsed.count();
                                                             time_records.push_back({res_count, ms});
                                                             cpu::recorder.record(to_string(res_count), ms);
@@ -1680,10 +1680,10 @@ namespace YES {
                                                             count_logger.count(res_count);
                                                         if (checkpoints.count(res_count)) {
                                                             TimePoint current_time = Clock::now();
-                                                            // 计算从开始到现在的耗时 (这里以毫秒为例，也可以用微秒 microseconds)
+
                                                             std::chrono::duration<double, std::milli> elapsed =
                                                                     current_time - start_time;
-                                                            // 记录下来
+
                                                             double ms = elapsed.count();
                                                             time_records.push_back({res_count, ms});
                                                             cpu::recorder.record(to_string(res_count), ms);
@@ -1731,7 +1731,7 @@ namespace YES {
                     redo = FindNext(notPivotNeighbors_Renum, Inc, emplaceIncCount);
                 }
             }
-            //recovery
+
             G_index[pivot] = 0;
             for (auto neighborOfPivot: _Graph[pivot])
                 G_degree[neighborOfPivot]--;

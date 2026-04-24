@@ -1,29 +1,29 @@
-// Copyright 2013 Google Inc. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// A safe_btree<> wraps around a btree<> and removes the caveat that insertion
-// and deletion invalidate iterators. A safe_btree<> maintains a generation
-// number that is incremented on every mutation. A safe_btree<>::iterator keeps
-// a pointer to the safe_btree<> it came from, the generation of the tree when
-// it was last validated and the key the underlying btree<>::iterator points
-// to. If an iterator is accessed and its generation differs from the tree
-// generation it is revalidated.
-//
-// References and pointers returned by safe_btree iterators are not safe.
-//
-// See the incorrect usage examples mentioned in safe_btree_set.h and
-// safe_btree_map.h.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #ifndef UTIL_BTREE_SAFE_BTREE_H__
 #define UTIL_BTREE_SAFE_BTREE_H__
@@ -54,11 +54,11 @@ class safe_btree_iterator {
 
   void update() const {
     if (iter_ != tree_->internal_btree()->end()) {
-      // A positive generation indicates a valid key.
+
       generation_ = tree_->generation();
       key_ = iter_.key();
     } else {
-      // Use a negative generation to indicate iter_ points to end().
+
       generation_ = -tree_->generation();
     }
   }
@@ -90,10 +90,10 @@ class safe_btree_iterator {
   Iterator* mutable_iter() const {
     if (generation_ != tree_->generation()) {
       if (generation_ > 0) {
-        // This does the wrong thing for a multi{set,map}. If my iter was
-        // pointing to the 2nd of 2 values with the same key, then this will
-        // reset it to point to the first. This is why we don't provide a
-        // safe_btree_multi{set,map}.
+
+
+
+
         iter_ = tree_->internal_btree()->lower_bound(key_);
         update();
       } else if (-generation_ != tree_->generation()) {
@@ -107,7 +107,7 @@ class safe_btree_iterator {
     return *mutable_iter();
   }
 
-  // Equality/inequality operators.
+
   bool operator==(const const_iterator &x) const {
     return iter() == x.iter();
   }
@@ -115,24 +115,24 @@ class safe_btree_iterator {
     return iter() != x.iter();
   }
 
-  // Accessors for the key/value the iterator is pointing at.
+
   const key_type& key() const {
     return key_;
   }
-  // This reference value is potentially invalidated by any non-const
-  // method on the tree; it is NOT safe.
+
+
   reference operator*() const {
     assert(generation_ > 0);
     return iter().operator*();
   }
-  // This pointer value is potentially invalidated by any non-const
-  // method on the tree; it is NOT safe.
+
+
   pointer operator->() const {
     assert(generation_ > 0);
     return iter().operator->();
   }
 
-  // Increment/decrement operators.
+
   self_type& operator++() {
     ++(*mutable_iter());
     update();
@@ -155,13 +155,13 @@ class safe_btree_iterator {
   }
 
  private:
-  // The generation of the tree when "iter" was updated.
+
   mutable int64_t generation_;
-  // The key the iterator points to.
+
   mutable key_type key_;
-  // The underlying iterator.
+
   mutable Iterator iter_;
-  // The tree the iterator is associated with.
+
   Tree *tree_;
 };
 
@@ -194,13 +194,13 @@ class safe_btree {
   typedef std::reverse_iterator<iterator> reverse_iterator;
 
  public:
-  // Default constructor.
+
   safe_btree(const key_compare &comp, const allocator_type &alloc)
       : tree_(comp, alloc),
         generation_(1) {
   }
 
-  // Copy constructor.
+
   safe_btree(const self_type &x)
       : tree_(x.tree_),
         generation_(1) {
@@ -231,7 +231,7 @@ class safe_btree {
     return const_reverse_iterator(begin());
   }
 
-  // Lookup routines.
+
   iterator lower_bound(const key_type &key) {
     return iterator(this, tree_.lower_bound(key));
   }
@@ -273,7 +273,7 @@ class safe_btree {
     return tree_.count_multi(key);
   }
 
-  // Insertion routines.
+
   template <typename ValuePointer>
   std::pair<iterator, bool> insert_unique(const key_type &key, ValuePointer value) {
     std::pair<tree_iterator, bool> p = tree_.insert_unique(key, value);
@@ -313,7 +313,7 @@ class safe_btree {
   }
   self_type& operator=(const self_type &x) {
     if (&x == this) {
-      // Don't copy onto ourselves.
+
       return *this;
     }
     ++generation_;
@@ -321,14 +321,14 @@ class safe_btree {
     return *this;
   }
 
-  // Deletion routines.
+
   void erase(const iterator &begin, const iterator &end) {
     tree_.erase(begin.iter(), end.iter());
     ++generation_;
   }
-  // Erase the specified iterator from the btree. The iterator must be valid
-  // (i.e. not equal to end()).  Return an iterator pointing to the node after
-  // the one that was erased (or end() if none exists).
+
+
+
   iterator erase(iterator iter) {
     tree_iterator res = tree_.erase(iter.iter());
     ++generation_;
@@ -345,11 +345,11 @@ class safe_btree {
     return res;
   }
 
-  // Access to the underlying btree.
+
   btree_type* internal_btree() { return &tree_; }
   const btree_type* internal_btree() const { return &tree_; }
 
-  // Utility routines.
+
   void clear() {
     ++generation_;
     tree_.clear();
@@ -370,7 +370,7 @@ class safe_btree {
   }
   key_compare key_comp() const { return tree_.key_comp(); }
 
-  // Size routines.
+
   size_type size() const { return tree_.size(); }
   size_type max_size() const { return tree_.max_size(); }
   bool empty() const { return tree_.empty(); }
@@ -390,6 +390,6 @@ class safe_btree {
   int64_t generation_;
 };
 
-}  // namespace btree
+}
 
-#endif  // UTIL_BTREE_SAFE_BTREE_H__
+#endif

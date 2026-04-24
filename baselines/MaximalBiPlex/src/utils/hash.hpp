@@ -19,83 +19,83 @@ private:
 	int mask;
 	int size;
 	std::vector<int> hashtable;
-	// int *hashtable;
 
-	// void rehash(int **_table) {
-	// 	int oldcapacity = capacity;
-	// 	mask = mask == 0 ? 1 : ((mask << 1) | 1);
-	// 	capacity = (mask + 1) * buff_size;
-	// 	int *newhash = new int[capacity];
-	// 	memset((newhash), unfilled, sizeof(int) * capacity);
-	// 	for (int i = 0; i < oldcapacity; ++i){
-	// 		if ((*_table)[i] != unfilled) insert((*_table)[i], &newhash);
-	// 	}
-	// 	std::swap((*_table), newhash);
-	// 	delete[] newhash;
-	// }
+
+
+
+
+
+
+
+
+
+
+
+
+
     
-	// void insert(const int &_u, int **_table) {
-		
-	// 	int hs = hash1(_u);
-	// 	for (int i = 0; i < buff_size; ++i) {
-	// 		if ((*_table)[hs * buff_size + i] == unfilled){
-	// 			(*_table)[hs * buff_size + i] = _u;
-	// 			return;
-	// 		}
-	// 	}
-	// 	hs = hash2(_u);
-	// 	for (int i = 0; i < buff_size; ++i) {
-	// 		if ((*_table)[hs * buff_size + i] == unfilled){
-	// 			(*_table)[hs * buff_size + i] = _u;
-	// 			return;
-	// 		}
-	// 	}
 
-	// 	bool use_hash1 = true;
-	// 	int u = _u;
-	// 	for (int i = 0; i < mask; ++i) {
-	// 		int replaced;
-	// 		if (use_hash1) hs = hash1(u);
-	// 		else hs = hash2(u);
-	// 		int j = 0;
-	// 		for (; j < buff_size; ++j) {
-	// 			if ((*_table)[hs * buff_size + j] == unfilled) break;
-	// 		}
-	// 		if (buff_size == j) {
-	// 			replaced = (*_table)[hs * buff_size];
-	// 			j = 1;
-	// 			for (; j < buff_size; j++) {
-	// 				(*_table)[hs * buff_size + j - 1] = (*_table)[hs * buff_size + j];
-	// 			}
-	// 			(*_table)[hs * buff_size + j - 1] = u;
-	// 		}
-	// 		else {
-	// 			replaced = (*_table)[hs * buff_size + j];
-	// 			(*_table)[hs * buff_size + j] = u;
-	// 		}
-	// 		use_hash1 = hs == hash2(replaced);
-	// 		u = replaced;
-	// 		if (u == unfilled) return;
-	// 	}
-	// 	rehash(_table);
-	// 	insert(u, _table);
-	// }
+		
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 	void rehash(std::vector<int> &table) {
 		int oldcapacity = capacity;
 		mask = mask == 0 ? 1 : ((mask << 1) | 1);
 		capacity = (mask + 1) * buff_size;
-		//int *newhash = new int[capacity];
-		//memset((newhash), unfilled, sizeof(int) * capacity);
+
+
 		std::vector<int> newhash(capacity, unfilled);
 		for (int i = 0; i < oldcapacity; ++i){
 			if (table[i] != unfilled) insert(table[i], newhash);
 		}
-		//table = std::move(newhash);
+
 		table.swap(newhash);
-		//table = newhash;
-		//std::swap((*_table), newhash);
-		//delete[] newhash;
+
+
+
 	}
     
 	void insert(int u, std::vector<int>& table) {
@@ -152,7 +152,7 @@ public:
 		clear();
 	}
 	~CuckooHash() {
-		// if (hashtable) delete[] hashtable;
+
 	}
 	void clear() {
 		capacity = mask = size = 0;
@@ -164,9 +164,9 @@ public:
 		while (size >= mask * buff_size) mask = (mask << 1) | 1;
 		capacity = (mask + 1) * buff_size;
 		std::vector<int>(capacity, unfilled).swap(hashtable);
-		// if (hashtable) delete[] hashtable;
-		// hashtable = new int[capacity];
-		// memset(hashtable, unfilled, sizeof(int) * capacity);
+
+
+
 	}
 
 	void insert(int u) {
@@ -216,7 +216,7 @@ public:
 	int getsize() {return size;}
 	int getmask() {return mask;}
 
-	//int *gethashtable() {return hashtable;}
+
 
 	bool operator[](const int &u) const {
 		return find(u);
